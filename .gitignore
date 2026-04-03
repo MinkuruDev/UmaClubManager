@@ -1,0 +1,6 @@
+.env
+__pycache__/
+fan_data/
+backup.db
+venv/
+firebase_credentials.json

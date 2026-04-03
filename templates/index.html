@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uma Club Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <nav class="top-nav">
+            <a href="/" class="active">Members</a>
+            <a href="/fans">Fan Progress</a>
+        </nav>
+        <header>
+            <h1>Uma Club Manager</h1>
+            <p>Manage your members efficiently</p>
+        </header>
+
+        <section class="form-section glass-panel">
+            <h2>Add New Member</h2>
+            <form action="/add" method="POST" class="add-form">
+                <div class="input-group">
+                    <label for="ingame_id">In-Game ID</label>
+                    <input type="text" id="ingame_id" name="ingame_id" required placeholder="e.g. 123456789">
+                </div>
+                <div class="input-group">
+                    <label for="ingame_name">In-Game Name</label>
+                    <input type="text" id="ingame_name" name="ingame_name" required placeholder="e.g. GoldShip">
+                </div>
+                <div class="input-group">
+                    <label for="discord_id">Discord ID</label>
+                    <input type="text" id="discord_id" name="discord_id" required placeholder="e.g. 123456789012345678">
+                </div>
+                <div class="input-group">
+                    <label for="discord_username">Discord Username</label>
+                    <input type="text" id="discord_username" name="discord_username" required placeholder="e.g. goldship#1234">
+                </div>
+                <button type="submit" class="submit-btn">Add Member</button>
+            </form>
+        </section>
+
+        <section class="list-section">
+            <h2>Current Members</h2>
+            <div class="table-container glass-panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>In-Game ID</th>
+                            <th>In-Game Name</th>
+                            <th>Discord ID</th>
+                            <th>Discord Username</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                        <tr>
+                            <td>{{ member.ingame_id }}</td>
+                            <td>{{ member.ingame_name }}</td>
+                            <td>{{ member.discord_id }}</td>
+                            <td>{{ member.discord_username }}</td>
+                            <td>
+                                <form action="/delete/{{ member.ingame_id }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="delete-btn">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="empty-state">No members found. Add one above!</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
