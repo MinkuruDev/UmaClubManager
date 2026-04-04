@@ -134,6 +134,9 @@ def process_fan_data(month, fan_data_dir='fan_data', db_path='backup.db', includ
                         elif 0 < deficit <= effective_req_day * 3:
                             status = 'bad'
                         
+                    if latest_day > 25 and status == 'bad':
+                        status = 'awful'
+                        
                     fan_rows.append({
                         'ingame_id': row['ingame_id'],
                         'name': row['name'],
@@ -198,7 +201,7 @@ def main():
             print("Error: No data rows found for this month.")
             return
             
-        send_fan_report(fan_rows, webhook_url)
+        send_fan_report(fan_rows, webhook_url, month=target_month, latest_day=latest_day)
         print("Done!")
 
 if __name__ == "__main__":

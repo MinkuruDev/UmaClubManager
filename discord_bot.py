@@ -1,6 +1,7 @@
 import requests
+import calendar
 
-def send_fan_report(fan_rows, webhook_url):
+def send_fan_report(fan_rows, webhook_url, month="Unknown", latest_day="Unknown"):
     if not webhook_url:
         print("No Webhook URL configured")
         return False
@@ -34,9 +35,21 @@ def send_fan_report(fan_rows, webhook_url):
     if tags:
         action_msg = "\n**Action Required:** " + " ".join(tags) + " You are falling behind your fan quotas! Please check your progress."
 
+    # Formatting the month header
+    month_header = str(month)
+    try:
+        if len(str(month)) == 6:
+            y = int(str(month)[:4])
+            m = int(str(month)[4:])
+            month_header = f"{calendar.month_name[m]} {y}"
+    except:
+        pass
+        
+    main_header = f"# Fan Progress Report - {month_header} (Day {latest_day})\n"
+
     # Chunking logic (max 2000 chars)
     chunks = []
-    current_chunk = ["```", header, divider]
+    current_chunk = [main_header, "```", header, divider]
     current_length = sum(len(x) for x in current_chunk) + len(current_chunk)
     
     for line in lines:

@@ -121,6 +121,7 @@
                 {% if fan_rows %}
                 <form action="/send_discord?month={{ selected_month }}" method="POST" style="margin: 0;">
                     <input type="hidden" name="fan_rows_json" value='{{ fan_rows | tojson }}'>
+                    <input type="hidden" name="latest_day" value='{{ latest_day }}'>
                     <button type="submit" class="submit-btn" style="background: #5865F2; width: auto; font-size: 0.9rem;">Send Report to Discord</button>
                 </form>
                 {% endif %}

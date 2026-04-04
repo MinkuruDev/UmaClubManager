@@ -264,11 +264,13 @@ def send_discord():
         
     import json
     fan_rows_json = request.form.get('fan_rows_json')
+    latest_day = request.form.get('latest_day', 'Unknown')
+    
     if fan_rows_json:
         fan_rows = json.loads(fan_rows_json)
         webhook_url = os.environ.get("DISCORD_WEBHOOK")
         from discord_bot import send_fan_report
-        send_fan_report(fan_rows, webhook_url)
+        send_fan_report(fan_rows, webhook_url, month=month, latest_day=latest_day)
         
     return redirect(url_for('fans', month=month))
 
