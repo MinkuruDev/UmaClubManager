@@ -16,6 +16,11 @@ See `requirements.txt` for the full list of dependencies.
 
 ## Installation
 1. Clone the repository to your local machine.
+```bash
+git clone https://github.com/MinkuruDev/UmaClubManager.git
+cd UmaClubManager
+```
+
 2. (Optional but recommended) Create and activate a virtual environment.
    ```bash
    # Linux/Mac
