@@ -24,7 +24,17 @@ def send_fan_report(fan_rows, webhook_url, month="Unknown", latest_day="Unknown"
         name_str = (row['name'][:17] + '...') if len(row['name']) > 20 else row['name']
         status_raw = row['status']
         status_str = emoji_map.get(status_raw, status_raw.capitalize())
-        lines.append(f"{name_str:<20} | {row['fan_fmt']:<12} | {row['expected_fmt']:<12} | {status_str}{' (Exempt)' if row.get('exempt') else ''}")
+        try:
+            fan_m = f"{float(str(row['fan_fmt']).replace(',', '')) / 1000000:.1f}M"
+        except:
+            fan_m = str(row['fan_fmt'])
+            
+        try:
+            expected_m = f"{float(str(row['expected_fmt']).replace(',', '')) / 1000000:.1f}M"
+        except:
+            expected_m = str(row['expected_fmt'])
+            
+        lines.append(f"{name_str:<20} | {fan_m:<12} | {expected_m:<12} | {status_str}{' (Exempt)' if row.get('exempt') else ''}")
         
         if status_raw == 'awful' and not row.get('exempt'):
             discord_id = row.get('discord_id')

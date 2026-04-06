@@ -12,6 +12,23 @@
     function toggleEditMode(modeClass) {
         document.querySelectorAll('.table-container').forEach(el => el.classList.toggle(modeClass));
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const viewMonthSelect = document.getElementById("month");
+        const yearInput = document.getElementById("upload_year");
+        const monthInput = document.getElementById("upload_month");
+
+        function updateUploadFields() {
+            const val = viewMonthSelect.value;
+            if (val && val.length === 6) {
+                yearInput.value = val.substring(0, 4);
+                monthInput.value = val.substring(4, 6);
+            }
+        }
+
+        // Only needed on load since the select auto-submits on change.
+        updateUploadFields();
+    });
     </script>
 </head>
 <body>
@@ -44,14 +61,14 @@
                 <div class="divider"></div>
 
                 <form action="/upload_fans" method="POST" enctype="multipart/form-data" class="upload-form">
-                    <div class="input-group" style="flex-direction: row; align-items:flex-end; gap:0.5rem;">
-                        <div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <div class="input-group">
                             <label for="upload_year">Year</label>
-                            <input type="number" id="upload_year" name="year" required placeholder="YYYY" style="width: 80px;" value="2026">
+                            <input type="text" id="upload_year" name="year" required placeholder="YYYY" style="width: 80px;" value="2026" pattern="\d{4}">
                         </div>
-                        <div>
+                        <div class="input-group">
                             <label for="upload_month">Month</label>
-                            <input type="number" id="upload_month" name="month" required placeholder="MM" style="width: 70px;" min="1" max="12">
+                            <input type="text" id="upload_month" name="month" required placeholder="MM" style="width: 70px;" pattern="\d{1,2}">
                         </div>
                     </div>
                     <div class="input-group" style="flex:1;">
