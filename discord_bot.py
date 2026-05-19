@@ -90,3 +90,18 @@ def send_fan_report(fan_rows, webhook_url, month="Unknown", latest_day="Unknown"
     except Exception as e:
         print(f"Error sending to Discord: {e}")
         return False
+
+def send_image(image_path, webhook_url):
+    if not webhook_url:
+        print("No Webhook URL configured")
+        return False
+
+    with open(image_path, 'rb') as f:
+        files = {'file': (image_path, f)}
+        try:
+            response = requests.post(webhook_url, files=files)
+            response.raise_for_status()
+            return True
+        except Exception as e:
+            print(f"Error sending image to Discord: {e}")
+            return False

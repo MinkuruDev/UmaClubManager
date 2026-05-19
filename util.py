@@ -7,8 +7,9 @@ import datetime
 import sys
 
 from dotenv import load_dotenv
-from discord_bot import send_fan_report
+from discord_bot import send_fan_report, send_image
 from chrono_scrapper import download_csv
+from screenshoot import take_screenshot
 
 def get_sqlite_db(db_path='backup.db'):
     conn = sqlite3.connect(db_path)
@@ -227,13 +228,19 @@ def main():
         print(f"Generating and sending report for month: {target_month}...")
         
         reqs, latest_day, fan_rows = process_fan_data(target_month, include_missing=args.missing)
-        
+
         if not fan_rows:
             print("Error: No data rows found for this month.")
             return
-            
+
         send_fan_report(fan_rows, webhook_url, month=target_month, latest_day=latest_day)
+        image_path = take_screenshot(target_month)
+        if not image_path:
+            print("Warning: Failed to take screenshot, proceeding without image.")
+        else:
+            send_image(image_path, webhook_url)
         print("Done!")
+
     elif args.command == 'scrape':
         print(f"Scraping latest fan data for club ID: {args.club_id}...")
         if not scrape_data(args.club_id):

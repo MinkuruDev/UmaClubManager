@@ -4,3 +4,6 @@ fan_data/
 backup.db
 venv/
 firebase_credentials.json
+Downloads/
+Screenshots/
+auto_report.sh
