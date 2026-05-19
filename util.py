@@ -3,8 +3,12 @@ import csv
 import sqlite3
 import calendar
 import argparse
+import datetime
+import sys
+
 from dotenv import load_dotenv
 from discord_bot import send_fan_report
+from chrono_scrapper import download_csv
 
 def get_sqlite_db(db_path='backup.db'):
     conn = sqlite3.connect(db_path)
@@ -161,6 +165,30 @@ def get_most_recent_month(fan_data_dir='fan_data'):
         return available_months[0]
     return None
 
+def scrape_data(club_id) -> bool:
+    previous_day = (datetime.datetime.now() - datetime.timedelta(days=1))
+    downloaded_path = download_csv(club_id)
+    if not downloaded_path:
+        print("Failed to download CSV data.")
+        return False
+    
+    # open csv file extract the lastest day match expected day
+    reader = csv.reader(open(downloaded_path, 'r', encoding='utf-8'))
+    header = next(reader)
+    lastest_day = header[-1]
+    expected_day = f"Day {previous_day.day}" if previous_day.hour >= 17 else f"Day {previous_day.day - 1}"
+    if lastest_day != expected_day:
+        print(f"Error: Latest day in CSV ({lastest_day}) does not match expected day ({expected_day}).")
+        return False
+    print(f"Successfully downloaded CSV data for club {club_id}. Latest day: {lastest_day}")
+
+    # move the file to fan_data folder with name month_year.csv
+    month_year = previous_day.strftime("%Y%m")
+    target_path = os.path.join('fan_data', f"{month_year}.csv")
+    os.makedirs('fan_data', exist_ok=True)
+    os.replace(downloaded_path, target_path)
+    return True
+
 def main():
     parser = argparse.ArgumentParser(description="Uma Club Manager CLI Utilities")
     subparsers = parser.add_subparsers(dest='command', help='Subcommands')
@@ -170,6 +198,9 @@ def main():
     report_parser.add_argument('-m', '--month', type=str, help='Month string, e.g. 03')
     report_parser.add_argument('-y', '--year', type=str, help='Year string, e.g. 2026')
     report_parser.add_argument('--missing', action='store_true', help='Include IDs that do not have a linked name in the database.')
+
+    scrape_parser = subparsers.add_parser('scrape', help='Scrape latest fan data from Chronogenesis.net and save to fan_data folder')
+    scrape_parser.add_argument('club_id', type=str, help='The ID of the club to scrape data for')
 
     args = parser.parse_args()
 
@@ -202,6 +233,11 @@ def main():
             return
             
         send_fan_report(fan_rows, webhook_url, month=target_month, latest_day=latest_day)
+        print("Done!")
+    elif args.command == 'scrape':
+        print(f"Scraping latest fan data for club ID: {args.club_id}...")
+        if not scrape_data(args.club_id):
+            sys.exit(1)
         print("Done!")
 
 if __name__ == "__main__":
