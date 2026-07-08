@@ -68,7 +68,7 @@ def process_fan_data(month, fan_data_dir='fan_data', db_path='backup.db', includ
                     if len(r) > max_cols:
                         max_cols = len(r)
                 
-                latest_day = max(0, max_cols - 1)
+                latest_day = max(0, max_cols - 2) # first 2 cols are ingame_id and name, rest are days
                 expected_total = sum(daily_quota_map.get(d, 0) for d in range(1, latest_day + 1))
                 current_daily_req = daily_quota_map.get(latest_day, 0)
 
